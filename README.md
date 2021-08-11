@@ -8,7 +8,7 @@ Bendimester23/Discord embedded application codes.md](https://gist.github.com/Ben
 So a great thanks to <u>Bendimester23</u> for those ids
 
 # Try it on Heroku
-Heroku is not a great place to host. But hopefully this bot will not cause any problem with heroku so you might can try the bot out on heroku 
+Heroku is not a great place to host. But hopefully this bot will not cause any problem with heroku so you might can try the bot out on heroku    
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new?button-url=https://github.com/bartick/NORMAC&template=https://github.com/bartick/NORMAC/tree/master)
 
 ## Help Needed
