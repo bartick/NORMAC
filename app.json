@@ -1,0 +1,16 @@
+{
+    "name":  "NORMAC",
+    "description": "A discord bot with the ablity to start discord embeded application activities for your server for you and your friends to play with",
+    "repository": "https://github.com/bartick/NORMAC",
+    "logo": "https://cdn.discordapp.com/avatars/874964374941495357/176fe255746511b81da432a6aa96db2b.webp?size=1024",
+    "keywords":[
+        "discord",
+        "bot",
+        "game"
+    ],
+    "env":{
+        "TOKEN": {
+            "description": "Discord Bot token. Get yours at here: https://discordapp.com/developers/applications/."
+        }
+    }
+}
