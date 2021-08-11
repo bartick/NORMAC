@@ -38,12 +38,7 @@ class Main(commands.Cog):
                 await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
             except Exception:
                 pass
-        
-        elif isinstance(error, commands.BotMissingPermissions):
-            try:
-                await ctx.send("Bot is missing required `Create Instant Invite` permission to run this command")
-            except Exception:
-                pass
+
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(f'Retry after {humanize.precisedelta(datetime.timedelta(seconds=error.retry_after),minimum_unit="seconds")}...')
 
@@ -58,12 +53,17 @@ class Main(commands.Cog):
         if voice_state==None:
             await ctx.send("You need to be in a vc to use this command")
             return
+        
+        try:
+            invite = await voice_state.channel.create_invite(
+                max_age=86400,
+                target_type=discord.InviteTarget.embedded_application,
+                target_application_id=self.application_ids[key][0]
+            )
+        except discord.errors.Forbidden:
+            await ctx.send("Bot is missing required `Create Instant Invite` permission to run this command")
+            return
 
-        invite = await voice_state.channel.create_invite(
-            max_age=86400,
-            target_type=discord.InviteTarget.embedded_application,
-            target_application_id=self.application_ids[key][0]
-        )
         
         view = discord.ui.View(timeout=1)
         view.add_item(discord.ui.Button(label=f"Join Activity", url=invite.url))
@@ -82,7 +82,6 @@ class Main(commands.Cog):
         aliases=['yt']
     )
     @commands.guild_only()
-    @commands.bot_has_permissions(create_instant_invite=True)
     async def youtube(self, ctx):
         await self.post_invite(ctx, "YOUTUBE")
     
@@ -92,7 +91,6 @@ class Main(commands.Cog):
         aliases=['pn']
     )
     @commands.guild_only()
-    @commands.bot_has_permissions(create_instant_invite=True)
     async def poker(self, ctx):
         await self.post_invite(ctx, "POKER")
     
@@ -101,7 +99,6 @@ class Main(commands.Cog):
         help="Play Chess In The Park in your server",
         aliases=['citp']
     )
-    @commands.bot_has_permissions(create_instant_invite=True)
     @commands.guild_only()
     async def chess(self, ctx):
         await self.post_invite(ctx, "CHESS")
@@ -111,7 +108,6 @@ class Main(commands.Cog):
         help="Play betrayal.io in your server",
         aliases=["bio"]
     )
-    @commands.bot_has_permissions(create_instant_invite=True)
     @commands.guild_only()
     async def betrayal(self, ctx):
         await self.post_invite(ctx, "BETRAYAL")
@@ -121,7 +117,6 @@ class Main(commands.Cog):
         help="Play Fishington.io in your server",
         aliases=['fio']
     )
-    @commands.bot_has_permissions(create_instant_invite=True)
     @commands.guild_only()
     async def fishing(self, ctx):
         await self.post_invite(ctx, "FISHING")

@@ -21,7 +21,7 @@ class MyBot(commands.Bot):
         # Add cooldown between commands
         command.cooldown_after_parsing = True
         if not getattr(command._buckets, "_cooldown", None):
-            command._buckets = commands.CooldownMapping.from_cooldown(1, 5, commands.BucketType.user)
+            command._buckets = commands.CooldownMapping.from_cooldown(1, 60, commands.BucketType.user)
     
     def load_cogs(self):
         print("Loading Cog")
