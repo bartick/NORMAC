@@ -1,17 +1,56 @@
 import datetime
 import discord
 from discord.ext import commands
+import traceback
+import humanize
+import sys
 
 class Main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.application_ids = {
-            "YOUTUBE": [755600276941176913, "Watch Youtube Together"],
+            "YOUTUBE": [755600276941176913, "Watch Youtube Go"],
             'POKER': [755827207812677713, "Play Poker Night"],
             'BETRAYAL': [773336526917861400, "Play Betrayal.io"],
             'FISHING': [814288819477020702, "Play Fishington.io"],
             'CHESS': [832012774040141894, "Play Chess In The Park"]
         }
+    
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+
+        # This prevents any commands with local handlers being handled here in on_command_error.
+        if hasattr(ctx.command, 'on_error'):
+            return
+        
+        ignored = (commands.CommandNotFound, discord.Forbidden, commands.NotOwner, discord.HTTPException, discord.NotFound)
+
+        # Allows us to check for original exceptions raised and sent to CommandInvokeError.
+        # If nothing is found. We keep the exception passed to on_command_error.
+        error = getattr(error, 'original', error)
+
+        # Anything in ignored will return and prevent anything happening.
+        if isinstance(error, ignored):
+            return
+        
+        if isinstance(error, commands.NoPrivateMessage):
+            try:
+                await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
+            except Exception:
+                pass
+        
+        elif isinstance(error, commands.BotMissingPermissions):
+            try:
+                await ctx.send("Bot is missing required `Create Instant Invite` permission to run this command")
+            except Exception:
+                pass
+        elif isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(f'Retry after {humanize.precisedelta(datetime.timedelta(seconds=error.retry_after),minimum_unit="seconds")}...')
+
+        else:
+            # All other Errors not returned come here. And we can just print the default TraceBack.
+            print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
     
     async def post_invite(self, ctx: commands.Context, key:str):
 
@@ -53,6 +92,7 @@ class Main(commands.Cog):
         aliases=['pn']
     )
     @commands.guild_only()
+    @commands.bot_has_permissions(create_instant_invite=True)
     async def poker(self, ctx):
         await self.post_invite(ctx, "POKER")
     
@@ -61,15 +101,17 @@ class Main(commands.Cog):
         help="Play Chess In The Park in your server",
         aliases=['citp']
     )
+    @commands.bot_has_permissions(create_instant_invite=True)
     @commands.guild_only()
     async def chess(self, ctx):
         await self.post_invite(ctx, "CHESS")
     
     @commands.command(
-        name="Betrayal",
+        name="betrayal",
         help="Play betrayal.io in your server",
         aliases=["bio"]
     )
+    @commands.bot_has_permissions(create_instant_invite=True)
     @commands.guild_only()
     async def betrayal(self, ctx):
         await self.post_invite(ctx, "BETRAYAL")
@@ -79,6 +121,7 @@ class Main(commands.Cog):
         help="Play Fishington.io in your server",
         aliases=['fio']
     )
+    @commands.bot_has_permissions(create_instant_invite=True)
     @commands.guild_only()
     async def fishing(self, ctx):
         await self.post_invite(ctx, "FISHING")

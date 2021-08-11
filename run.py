@@ -15,6 +15,14 @@ class MyBot(commands.Bot):
     async def on_ready(self):
         print(f"Logged in as {self.user}")
     
+    def add_command(self, command: commands.Command):
+        super().add_command(command)
+
+        # Add cooldown between commands
+        command.cooldown_after_parsing = True
+        if not getattr(command._buckets, "_cooldown", None):
+            command._buckets = commands.CooldownMapping.from_cooldown(1, 5, commands.BucketType.user)
+    
     def load_cogs(self):
         print("Loading Cog")
         for file in listdir('cogs'):
@@ -36,8 +44,8 @@ kwargs = {
     "intents": intents,
     "case_insensitive": True,
     "token": environ.get("TOKEN"),
-    "activity": discord.Game(name="looking into discord Embeded Games"),
-    "description": "**A Discord Embeded Application Bot.**"
+    "activity": discord.Game(name="looking into discord Embeded Games | .help for more info"),
+    "description": "A Discord Embeded Application Bot to start a discord activity"
 }
 
 bot = MyBot(**kwargs)
