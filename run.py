@@ -10,6 +10,7 @@ class MyBot(commands.Bot):
     def __init__(self, **options):
         self.prefix = "."
         self.token = options.pop("token",None)
+        self.topToken = options.pop("topToken", None)
         super().__init__(command_prefix=self.prefix, **options)
     
     async def on_ready(self):
@@ -44,6 +45,7 @@ kwargs = {
     "intents": intents,
     "case_insensitive": True,
     "token": environ.get("TOKEN"),
+    "topToken": environ.get("TOPTOKEN"),
     "activity": discord.Game(name="looking into discord Embeded Games | .help for more info"),
     "description": "A Discord Embeded Application Bot to start a discord activity"
 }
